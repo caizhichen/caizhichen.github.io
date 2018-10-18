@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="css/1.css" /> 
+</head>
+<body>
+	<div id="wrap">
+		<div id="header" class="clear">
+			<div class="header_left fl">
+				<h1>
+					<a class="logo fl" href="javascript:;"></a>
+					|
+					<a href="javascript:;">邮箱</a>
+				</h1>
+			</div>
+			<div class="header_right fr">
+				<nav class="fl">
+				<a href="javascript:;">邮箱首页</a>|<a href="javascript:;">设置</a>
+			   </nav>
+			   <div class="emailimg fr">   
+			     <p class="hint1 fl"></p>
+			     <p class="hint2 fr"></p>
+			  </div>
+			</div>
+		</div>
+
+		<div id="main" class="clear">
+			<div class="main_side fl">
+				<ul class="ulbig">
+					<li class="write">写信</li>
+					<li class="receive">收信</li>
+					<li class="address">通讯录</li>
+				</ul>
+				<ul class="ulsmall">
+					<li class="receive active1">收件箱</li>
+					<li class="star">星标邮件</li>
+					<li class="flock">群邮件</li>
+					<li class="draft">草稿箱</li>
+					<li class="draft">已发送</li>
+					<li class="delete active2">已删除<a class="empty" href="javascript:;">清空</a></li>
+					<li class="waste">垃圾箱<a class="empty" href="javascript:;">清空</a></li>
+				</ul>
+			</div>
+			<div class="main_section fr">
+				<div class="main_header">
+					<div class="title">
+					    收件箱(共96封,其中<a href="javascript:;">未读邮件</a>9封)
+					</div>
+					<div class="content">
+						<a id="delet"  href="javascript:;">删除</a>
+						<a href="javascript:;">彻底删除</a>
+						<a href="javascript:;">转发</a>
+						<a href="javascript:;">举报</a>
+						<a href="javascript:;">全部标为已读</a>
+						<a class="icon" href="javascript:;">标记为...</a>
+						<a class="icon" href="javascript:;">移动到...</a>
+					</div>
+					<div class="footer">
+						<input type="checkbox" />
+						<p><span class="span1"></span><span class="span2"></span></p>
+					</div>    
+				</div>
+				<div class="main_content">
+					<ul class="email">
+						<!-- <li>
+						<input type="checkbox">
+						<div class="wrap-drag">
+							<div>
+								<span>秒味课堂1</span>
+								<span class="span2">2015-12-30</span>
+							</div>
+							<p>JS拖拽的进一步学习,移动与拉伸JS拖拽的进一步练习</p>
+						</div>	
+						</li> -->
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="hint3">选中2封邮件</div>
+</body>
+<script src="js/data.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/letter.js"></script>
+</html>
