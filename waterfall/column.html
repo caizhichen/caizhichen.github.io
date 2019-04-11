@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>columns</title>
+<style>
+
+body {
+    margin: 0;
+}
+p {
+    margin: 0;
+}
+
+#box {
+    width: 600px;
+    column-count: 2;
+    column-gap: 0;
+}
+.item {
+    width: 300px;
+    break-inside: avoid;
+
+}
+.item p:nth-of-type(2) {
+    text-align: center;
+    background: #ccc;
+}
+.item img{
+    width: 100%;
+    display: block;
+}
+
+
+
+
+</style>
+</head>
+<body>
+    <div id="box">
+        <div class="item">
+            <p><img src="https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1036218379,1213399244&fm=26&gp=0.jpg" alt=""></p>
+            <p>这是第一项</p>
+        </div>
+        <div class="item">
+            <p><img src="https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=3429654663,2972188411&fm=26&gp=0.jpg" alt=""></p>
+            <p>这是第二项</p>
+        </div>
+        <div class="item">
+            <p><img src="https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2384273948,595044370&fm=26&gp=0.jpg" alt=""></p>
+            <p>这是第三项</p>
+        </div>
+        <div class="item">
+            <p><img src="https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1749855934,1101507253&fm=26&gp=0.jpg" alt=""></p>
+            <p>这是第四项</p>
+        </div>
+        <div class="item">
+            <p><img src="https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=3368961625,1391011832&fm=11&gp=0.jpg" alt=""></p>
+            <p>这是第五项</p>
+        </div>
+        <div class="item">
+            <p><img src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3091594995,2558037734&fm=26&gp=0.jpg" alt=""></p>
+            <p>这是第六项</p>
+        </div>
+        <div class="item">
+            <p><img src="https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2563255527,3531629520&fm=26&gp=0.jpg" alt=""></p>
+            <p>这是第七项</p>
+        </div>
+     </div>
+</body>
+</html>
