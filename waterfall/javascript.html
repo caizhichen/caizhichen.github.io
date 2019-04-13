@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+<style>
+
+body {
+    margin: 0;
+}
+p {
+    margin: 0;
+}
+#waterfall {
+    width: 400px; /*设定总容器宽度*/
+    display: flex;
+}
+.column {
+    flex: 1; /*每个子元素各占一份*/
+}
+
+
+.column img {
+    width: 200px;
+    display: block;
+}
+.column p:nth-of-type(2) {
+    text-align: center;
+    background-color: antiquewhite;
+}
+
+</style>
+</head>
+<body>
+    <div id="waterfall"> <!--瀑布流最外层容器-->
+        <div class="column"><!--将最外层划分为3个子元素容器，用来存放内容列表-->
+            <div class="item1"><!--添加这一层容器是为了获取各自列的内容高度，通过循环，在高度最小列添加列表项-->
+                <!-- <div>
+                    <p>
+                        <img src=" alt="">
+                    </p>
+                    <p>这是文字描述</p>
+                </div> -->
+                <!--列表项-->
+            </div>
+        </div>
+        <div class="column">
+            <div class="item2">
+            </div>
+        </div>
+    </div>
+<script>
+    
+    var defaultImg = new Image();
+    defaultImg.src = 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=51715546,2816916450&fm=26&gp=0.jpg';
+
+    // 获取列表项外层容器，用来获取该列总高度和添加子项。
+    var item1 = document.querySelector('.item1');
+    var item2 = document.querySelector('.item2');
+
+    setTimeout(()=>{ // 模拟ajax获取图片数据
+        var arr = [ // 模拟数据
+            {
+                text: '这是图片1',
+                src: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/i'
+            },
+            {
+                src: 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2992241689,499733493&fm=26&gp=0.jpg',
+                text: '这是图片2'
+            },
+            {
+                text: '这是图片3',
+                src: 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2969780621,3804924728&fm=200&gp=0.jpg'
+            },
+            {
+                src: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2006592942,2480446407&fm=200&gp=0.jpg',
+                text: '这是图片4'
+            },
+            {
+                text: '这是图片5',
+                src: 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2744966649,1683455002&fm=26&gp=0.jpg'
+            },
+            {
+                src: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=3189653015,2178768034&fm=26&gp=0.jpg',
+                text: '这是图片6'
+            },
+            {
+                text: '这是图片7',
+                src: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1867339380,1890495727&fm=200&gp=0.jpg'
+            },
+            {
+                src: 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=615663329,2871716128&fm=200&gp=0.jpg',
+                text: '这是图片8'
+            }
+        ];
+
+        var promiseAll = [],
+            img = [];
+
+        arr.forEach((val,i)=>{ // 循环加载图片
+            promiseAll[i] = new Promise((res,rej)=>{
+                img[i] = new Image();
+                img[i].src = val.src;
+                img[i].title = val.text;
+                img[i].onload = function () { // 图片加载完毕后该promise状态为fulfilled
+                    res(this);
+                };
+                img[i].onerror = function () { //图片加载失败，显示默认图片
+                    this.src = defaultImg.src;
+                    this.onload = function () {
+                        res(this);
+                    };
+                }
+            });
+        });
+        const p = Promise.all(promiseAll).then((img)=>{ //合并promise，这意味着所有promise状态为fulfilled，p的状态才为fulfilled
+       
+            img.forEach((val)=>{ // 循环添加
+                if (item1.offsetHeight <= item2.offsetHeight) { // 判断高度最低一列，添加内容
+                    // 往第一列添加列表项
+                    item1.innerHTML += 
+                    `<div>
+                        <p><img src="${val.src}" alt=""></p>
+                        <p>${val.title}</p>
+                    </div>`;
+                } else {
+                     // 往第二列添加列表项
+                    item2.innerHTML += 
+                    `<div>
+                        <p><img src="${val.src}" alt=""></p>
+                        <p>${val.title}</p>
+                    </div>`;
+                }
+            });
+        });
+    },100);
+
+</script>
+</body>
+</html>
