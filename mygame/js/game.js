@@ -1,6 +1,6 @@
-var canvas = document.querySelector('#canvas');
-var gc = canvas.getContext("2d");
-var data = map(12,12);
+var canvas = document.querySelector('#canvas'),
+    gc = canvas.getContext("2d"),
+    data = map(12,12);
 
 render(data,gc);
 
