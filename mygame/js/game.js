@@ -1,12 +1,12 @@
-var canvas = document.querySelector('#canvas');
-var gc = canvas.getContext("2d");
-var data = map(12,12);
+var canvas = document.querySelector('#canvas'),
+    gc = canvas.getContext("2d"),
+    data = map(12,12);
 
 render(data,gc);
 
 console.log(data);
 /**
- * 创建二维数组
+ * 创建二维数组：方块问题，通过二维数组的值是1还是0，渲染不同颜色。黄色作为背景，另一种颜色作为方块
  * 
  * @param {number} row 行 
  * @param {number} column 列 
