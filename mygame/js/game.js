@@ -1,12 +1,22 @@
 var canvas = document.querySelector('#canvas'),
     gc = canvas.getContext("2d"),
-    data = map(12,12);
+    data = map(12,12),
+    // 不同形状的方块
+    mold = [
+        [[1,1,1,1]],
+        [[1,1],[1,1]],
+        [[1,1,0],[0,1,1]],
+        [[0,1,1],[1,1,0]],
+        [[0,1,0],[1,1,1]],
+        [[1,0,0],[1,1,1]],
+        [[0,0,1],[1,1,1]]
+    ];
 
+// 地图初始化
 render(data,gc);
 
-console.log(data);
 /**
- * 创建二维数组：方块问题，通过二维数组的值是1还是0，渲染不同颜色。黄色作为背景，另一种颜色作为方块
+ * 创建二维数组
  * 
  * @param {number} row 行 
  * @param {number} column 列 
@@ -23,10 +33,29 @@ function map (row,column) {
 };
 
 /**
- * 根据 map生成的二维数组构建游戏地图。
+ * 通过修改二维数组，渲染不同颜色，来区分方块和背景。渲染方块。
+ * 可刷新页面看到每次呈现不同颜色方块
+ */
+
+update(mold);
+function update(mold) {
+    // 回去随机一种方块矩阵
+    var num = Math.floor(Math.random()*7);
+        matrix = mold[num];
+
+    for (let i = 0; i < matrix.length; i++) {
+        for (let j = 0; j < matrix[0].length; j++) {
+            // i控制的是列，j控制的是行。
+            data[i][j] = matrix[i][j];
+        }
+    }
+    render(data);
+};
+
+/**
+ * 根据 map生成的二维数组渲染游戏地图。
  * 
  * @param {number} data 二维数组
- * @param {object} gc canvas 2D上下文
  */
 function render (data) {
     /**
@@ -46,8 +75,10 @@ function render (data) {
 
     for (let i = 0; i < cLen; i++) {
         for (let j = 0; j < rLen; j++) {
-            gc.fillStyle = 'yellow';
-            // 每个方块的间距为10
+
+            // 值为 1，则绘制成红色；为 0，则绘制成黄色。1代表方块，0代表背景。
+            gc.fillStyle = data[i][j] ? 'red' : 'yellow';
+
             gc.fillRect( j*(w+5)+5, i*(h+5)+5, w, h );
         }
     }
