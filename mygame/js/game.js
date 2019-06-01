@@ -1,7 +1,8 @@
 var canvas = document.querySelector('#canvas'),
     gc = canvas.getContext("2d"),
     data = map(12,12),
-    // 不同形状的方块
+    y = 0,
+    // 所有方块集合
     mold = [
         [[1,1,1,1]],
         [[1,1],[1,1]],
@@ -10,10 +11,28 @@ var canvas = document.querySelector('#canvas'),
         [[0,1,0],[1,1,1]],
         [[1,0,0],[1,1,1]],
         [[0,0,1],[1,1,1]]
-    ];
+    ],
+    // 生成随机一种方块的矩阵
+    matrix = randomMatrix(mold);
 
 // 地图初始化
-render(data,gc);
+render(data);
+
+// 执行方块下落
+fall(400);
+
+/**
+ * 
+ * @param {number} time 定时 
+ */
+
+function fall(time) {
+    setInterval(()=>{
+        update(matrix);
+        clear(matrix);
+        y++;
+    },time);
+};
 
 /**
  * 创建二维数组
@@ -21,6 +40,7 @@ render(data,gc);
  * @param {number} row 行 
  * @param {number} column 列 
  */
+
 function map (row,column) {
     var data = [];
     for (let i = 0; i < column; i++) {
@@ -33,23 +53,45 @@ function map (row,column) {
 };
 
 /**
- * 通过修改二维数组，渲染不同颜色，来区分方块和背景。渲染方块。
- * 可刷新页面看到每次呈现不同颜色方块
+ *  返回一个随机的方块矩阵，尽量采用传参，以避免全局访问。
+ * 
+ * @param {array} mold 方块的类型数组
  */
 
-update(mold);
-function update(mold) {
-    // 回去随机一种方块矩阵
-    var num = Math.floor(Math.random()*7);
-        matrix = mold[num];
+function randomMatrix(mold) {
+    return mold[Math.floor(Math.random()*7)];
+};
 
+/**
+ * 创建一个方块
+ * 
+ * @param {array} matrix 方块的类型数组
+ */
+
+function update(matrix) {
     for (let i = 0; i < matrix.length; i++) {
         for (let j = 0; j < matrix[0].length; j++) {
             // i控制的是列，j控制的是行。
-            data[i][j] = matrix[i][j];
+            data[i+y][j+4] = matrix[i][j];
         }
     }
     render(data);
+};
+
+/**
+ * 清除上一个方块
+ * 
+ * @param {array} matrix 方块的类型数组
+ */
+
+function clear (matrix) {
+    for (let i = 0; i < matrix.length; i++) {
+        for (let j = 0; j < matrix[0].length; j++) {
+            // i控制的是列，j控制的是行。
+            data[i+y][j+4] = 0;
+            // i < matrix.length - y
+        }
+    }
 };
 
 /**
@@ -57,6 +99,7 @@ function update(mold) {
  * 
  * @param {number} data 二维数组
  */
+
 function render (data) {
     /**
      * 通过循环绘制方块，先绘制第一行的方块，以此类推。
