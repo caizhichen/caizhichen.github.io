@@ -1,6 +1,7 @@
 var canvas = document.querySelector('#canvas'),
     gc = canvas.getContext("2d"),
-    data = map(12,12),
+    data = map(13,12),
+    x = 4,
     y = 0,
     // 所有方块集合
     mold = [
@@ -19,7 +20,39 @@ var canvas = document.querySelector('#canvas'),
 render(data);
 
 // 执行方块下落
-fall(200);
+fall(300);
+
+document.onkeydown = function (e) {
+    switch (e.keyCode) {
+        // 左
+        case 37:
+            clear(matrix);
+            x--;
+            if (x < 0) {
+                x = 0;
+            }
+            update(matrix);
+        break;
+    
+        // 上
+        case 38:
+            console.log('点击了上移键') 
+            break;
+        // 右
+        case 39:
+            clear(matrix);
+            x++;
+            if (x >= data[0].length - matrix[0].length) {
+                x = data[0].length - matrix[0].length;
+            }
+            update(matrix);    
+        break;
+        // 下
+        case 40:
+            
+            break;
+    }
+};
 
 /**
  * 
@@ -29,27 +62,39 @@ fall(200);
 function fall(time) {
     setInterval(function () {
         update(matrix);
-        //clear(matrix);
         if (!collision(matrix)) {
             clear(matrix);
         }
-        // clear(matrix);
+        // 碰撞成功，则重置一个新的方块
         if (collision(matrix)) {
             y = -1;
+            x = 4;
             matrix = randomMatrix(mold);
         }
         y++;
     },time);
 };
 
-// 碰撞检测，成功则返回true，失败则返回false
+/**
+ * 碰撞检测，返回true，则碰撞成功。返回false，则碰撞失败。
+ * 
+ * @param {array} matrix 方块矩阵
+ */
 function collision(matrix) {
-    if (matrix.length+y >= 12) {
+    // 多次使用，则用变量存储
+    var len = matrix.length;
+    // 方块到底部
+    if (y >= 12 - len) {
         return true;
     };
-    for (let i = matrix.length - 1; i < matrix.length; i++) {
+    /**
+     * 方块与其他方块进行碰撞检测。
+     * 1. 整个游戏所有方块由data构成，根据当前方块最后一列+1列是否有等于1的，判断底下是否有其他方块。
+     * 2. 当前方块最后一列值为1的项才能进行判断。
+     */
+    for (let i = len - 1; i < len; i++) {
         for (let j = 0; j < matrix[0].length; j++) {
-            if(data[i+y][j+4] && data[i+y+1][j+4] == 1) {
+            if(data[i+y][j+x] && data[i+y+1][j+x] == 1) {
                 return true;
             };
         }
@@ -97,8 +142,8 @@ function update(matrix) {
     for (let i = 0; i < matrix.length; i++) {
         for (let j = 0; j < matrix[0].length; j++) {
             // 等于0才将它等于1。这是因为绘制时会将其他方块为1的值改为0。
-            if (!data[i+y][j+4]) {
-                data[i+y][j+4] = matrix[i][j];
+            if (!data[i+y][j+x]) {
+                data[i+y][j+x] = matrix[i][j];
             }
         }
     }
@@ -115,7 +160,7 @@ function clear (matrix) {
     for (let i = 0; i < matrix.length; i++) {
         for (let j = 0; j < matrix[0].length; j++) {
             // i控制的是列，j控制的是行。
-            data[i+y][j+4] = 0;
+            data[i+y][j+x] = 0;
             // i < matrix.length - y
         }
     }
