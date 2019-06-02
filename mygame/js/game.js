@@ -1,8 +1,10 @@
 var canvas = document.querySelector('#canvas'),
     gc = canvas.getContext("2d"),
     data = map(13,12),
+    onOff = false,
     x = 4,
     y = 0,
+    timer = null,
     // 所有方块集合
     mold = [
         [[1,1,1,1]],
@@ -20,7 +22,7 @@ var canvas = document.querySelector('#canvas'),
 render(data);
 
 // 执行方块下落
-fall(300);
+fall(400);
 
 document.onkeydown = function (e) {
     switch (e.keyCode) {
@@ -36,7 +38,8 @@ document.onkeydown = function (e) {
     
         // 上
         case 38:
-            console.log('点击了上移键') 
+            clear(matrix);
+            matrix = rotate(matrix);
             break;
         // 右
         case 39:
@@ -49,30 +52,41 @@ document.onkeydown = function (e) {
         break;
         // 下
         case 40:
-            
-            break;
+            if (onOff) {
+                return;
+            }
+            onOff = true;
+            clearInterval(timer);
+            fall(100);
+        break;
     }
 };
-
+document.onkeyup = function (e){
+    if (e.keyCode == 40) {
+        onOff = false;
+        clearInterval(timer);
+        fall(400);
+    }
+};
 /**
  * 
  * @param {number} time 定时 
  */
 
 function fall(time) {
-    setInterval(function () {
-        update(matrix);
-        if (!collision(matrix)) {
-            clear(matrix);
-        }
-        // 碰撞成功，则重置一个新的方块
-        if (collision(matrix)) {
-            y = -1;
-            x = 4;
-            matrix = randomMatrix(mold);
-        }
-        y++;
-    },time);
+    timer = setInterval(function () {
+            update(matrix);
+            if (!collision(matrix)) {
+                clear(matrix);
+            }
+            // 碰撞成功，则重置一个新的方块
+            if (collision(matrix)) {
+                y = -1;
+                x = 4;
+                matrix = randomMatrix(mold);
+            }
+            y++;
+        },time);
 };
 
 /**
@@ -87,11 +101,6 @@ function collision(matrix) {
     if (y >= 12 - len) {
         return true;
     };
-    /**
-     * 方块与其他方块进行碰撞检测。
-     * 1. 整个游戏所有方块由data构成，根据当前方块最后一列+1列是否有等于1的，判断底下是否有其他方块。
-     * 2. 当前方块最后一列值为1的项才能进行判断。
-     */
     for (let i = len - 1; i < len; i++) {
         for (let j = 0; j < matrix[0].length; j++) {
             if(data[i+y][j+x] && data[i+y+1][j+x] == 1) {
@@ -100,6 +109,28 @@ function collision(matrix) {
         }
     }
     return false;
+};
+
+/**
+ * 方块的翻转
+ * 
+ * @param {array} matrix 方块的类型数组
+ */
+function rotate (matrix) {
+    var arr = [],
+        x = matrix.length,
+        y = matrix[0].length;
+
+    for (let i = 0; i < y; i++) {
+        arr.push([]);
+    }
+
+    for (let i = 0; i < x; i++) {
+        for (let j = 0; j < y; j++) {
+            arr[j][y - 1 - i] = matrix[i][j];
+        }
+    }
+    return arr;
 };
 
 /**
