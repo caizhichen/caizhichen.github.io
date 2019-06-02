@@ -19,7 +19,7 @@ var canvas = document.querySelector('#canvas'),
 render(data);
 
 // 执行方块下落
-fall(400);
+fall(200);
 
 /**
  * 
@@ -28,22 +28,33 @@ fall(400);
 
 function fall(time) {
     setInterval(function () {
-        if (matrix.length+y > 12) {
-            y = 0;
-            matrix = randomMatrix(mold);
-        }
         update(matrix);
-        if (matrix.length+y < 12) {
+        //clear(matrix);
+        if (!collision(matrix)) {
             clear(matrix);
         }
         // clear(matrix);
+        if (collision(matrix)) {
+            y = -1;
+            matrix = randomMatrix(mold);
+        }
         y++;
     },time);
 };
 
-// 碰撞检测
-function collision() {
-
+// 碰撞检测，成功则返回true，失败则返回false
+function collision(matrix) {
+    if (matrix.length+y >= 12) {
+        return true;
+    };
+    for (let i = matrix.length - 1; i < matrix.length; i++) {
+        for (let j = 0; j < matrix[0].length; j++) {
+            if(data[i+y][j+4] && data[i+y+1][j+4] == 1) {
+                return true;
+            };
+        }
+    }
+    return false;
 };
 
 /**
@@ -85,8 +96,10 @@ function randomMatrix(mold) {
 function update(matrix) {
     for (let i = 0; i < matrix.length; i++) {
         for (let j = 0; j < matrix[0].length; j++) {
-            // i控制的是列，j控制的是行。
-            data[i+y][j+4] = matrix[i][j];
+            // 等于0才将它等于1。这是因为绘制时会将其他方块为1的值改为0。
+            if (!data[i+y][j+4]) {
+                data[i+y][j+4] = matrix[i][j];
+            }
         }
     }
     render(data);
