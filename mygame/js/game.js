@@ -27,11 +27,23 @@ fall(400);
  */
 
 function fall(time) {
-    setInterval(()=>{
+    setInterval(function () {
+        if (matrix.length+y > 12) {
+            y = 0;
+            matrix = randomMatrix(mold);
+        }
         update(matrix);
-        clear(matrix);
+        if (matrix.length+y < 12) {
+            clear(matrix);
+        }
+        // clear(matrix);
         y++;
     },time);
+};
+
+// 碰撞检测
+function collision() {
+
 };
 
 /**
@@ -43,6 +55,8 @@ function fall(time) {
 
 function map (row,column) {
     var data = [];
+    // let 作用相当于var，但是var在循环中是存在问题的。
+    // 因为var没有块作用域，所有的迭代存在一个作用域中。在闭包的情况下，会存在问题（得到的每一个声明值，都是最后一个）。
     for (let i = 0; i < column; i++) {
         data.push([]);
         for (let j = 0; j < row; j++) {
@@ -111,10 +125,11 @@ function render (data) {
      * @param {number} w 方块宽度
      * @param {number} h 方块高度
      */
-    rLen = data[0].length,
-    cLen = data.length,
-    w = (495/rLen)-5,
-    h = (495/cLen)-5;
+
+    var rLen = data[0].length,
+        cLen = data.length,
+        w = (495/rLen)-5,
+        h = (495/cLen)-5;
 
     for (let i = 0; i < cLen; i++) {
         for (let j = 0; j < rLen; j++) {
