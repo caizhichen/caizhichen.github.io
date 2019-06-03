@@ -226,6 +226,9 @@ function map (row,column) {
 function fullLine(arrLine) {
     var result = false;
     for (let i = 0; i < data.length; i++) {
+    // 遍历data[i]数组，如果该数组每一个值都为1，则返回true，否则返回false。
+    // () => {} es6语法：箭头函数。类似function
+    // 数组every方法： es5语法。
     result = data[i].every((val)=>{
                 return val == 1;
             });
