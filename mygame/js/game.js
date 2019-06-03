@@ -234,6 +234,8 @@ function fullLine(arrLine) {
             });
         if (result) {
             data.splice(i,1);
+            // 添加一行背景。concat合并会生成一个新的数组，它的值和arrLine一样。
+            // 这是由于对象的引用赋值问题，两者会产生关联。所以采用这种方式。
             data.unshift([].concat(arrLine));
             result = false;
         }
