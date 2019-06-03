@@ -1,6 +1,6 @@
 var canvas = document.querySelector('#canvas'),
     gc = canvas.getContext("2d"),
-    data = map(13,12),
+    data = map(16,16),
     onOff = false,
     x = 4,
     y = 0,
@@ -29,10 +29,14 @@ document.onkeydown = function (e) {
         // 左
         case 37:
             clear(matrix);
-            x--;
-            if (x < 0) {
-                x = 0;
+            if (!collisionX(-1)) {
+                x--;
             }
+            //collisionX(-1);
+            // x--;
+            // if (x < 0) {
+            //     x = 0;
+            // }
             update(matrix);
         break;
     
@@ -44,10 +48,15 @@ document.onkeydown = function (e) {
         // 右
         case 39:
             clear(matrix);
-            x++;
-            if (x >= data[0].length - matrix[0].length) {
-                x = data[0].length - matrix[0].length;
+            if (!collisionX(1)) {
+                x++;
             }
+            //collisionX(1);
+            // x++;
+            // // x大小限制
+            // if (x >= data[0].length - matrix[0].length) {
+            //     x = data[0].length - matrix[0].length;
+            // }
             update(matrix);    
         break;
         // 下
@@ -57,10 +66,11 @@ document.onkeydown = function (e) {
             }
             onOff = true;
             clearInterval(timer);
-            fall(100);
+            fall(50);
         break;
     }
 };
+// 下键键盘抬起事件
 document.onkeyup = function (e){
     if (e.keyCode == 40) {
         onOff = false;
@@ -69,6 +79,7 @@ document.onkeyup = function (e){
     }
 };
 /**
+ * 方块下落函数
  * 
  * @param {number} time 定时 
  */
@@ -76,11 +87,11 @@ document.onkeyup = function (e){
 function fall(time) {
     timer = setInterval(function () {
             update(matrix);
-            if (!collision(matrix)) {
+            if (!collisionY(matrix)) {
                 clear(matrix);
             }
-            // 碰撞成功，则重置一个新的方块
-            if (collision(matrix)) {
+            // 碰撞成功，则不清除上一个方块，生成一个新的方块
+            if (collisionY(matrix)) {
                 y = -1;
                 x = 4;
                 matrix = randomMatrix(mold);
@@ -90,15 +101,71 @@ function fall(time) {
 };
 
 /**
- * 碰撞检测，返回true，则碰撞成功。返回false，则碰撞失败。
+ * X轴的碰撞检测，返回true，则碰撞成功。返回false，则碰撞失败。
+ * 
+ * @param {number} n 1或者-1
+ */
+function collisionX(n) {
+    var maxX = data[0].length -  matrix[0].length,
+    num,
+    index;
+    if (n + x < 0 || n + x > maxX) {
+        return true;
+    }
+
+    // 简化写法
+    for (let i = 0; i < matrix.length; i++) {
+        if (n > 0) {
+            index = matrix[0].length;
+            num = 1;
+        } else {
+            index = 0;
+            num = -1;
+        }
+        while (!matrix[i][index]) {
+            n > 0 ? index-- : index++;
+        }
+        if (data[y+i][x+index+num]) {
+            return true;
+        } 
+    };
+    return false;
+
+    // if (n > 0) {
+    //     for (let i = 0; i < matrix.length; i++) {
+    //         var index = matrix[0].length;
+    //         while (!matrix[i][index]) {
+    //             index--;
+    //         }
+    //         if (data[y+i][x+index+1]) {
+    //             return true;
+    //         } 
+    //     };
+    //     return false;
+    // } else {
+    //     for (let i = 0; i < matrix.length; i++) {
+    //         var index = 0;
+    //         while (!matrix[i][index]) {
+    //             index++;
+    //         }
+    //         if (data[y+i][x+index-1]) {
+    //             return true;
+    //         } 
+    //     };
+    //     return false;
+    // }
+};
+
+/**
+ * Y轴的碰撞检测，返回true，则碰撞成功。返回false，则碰撞失败。
  * 
  * @param {array} matrix 方块矩阵
  */
-function collision(matrix) {
+function collisionY(matrix) {
     // 多次使用，则用变量存储
     var len = matrix.length;
     // 方块到底部
-    if (y >= 12 - len) {
+    if (y >= data.length - len) {
         return true;
     };
     var n;
@@ -194,8 +261,9 @@ function clear (matrix) {
     for (let i = 0; i < matrix.length; i++) {
         for (let j = 0; j < matrix[0].length; j++) {
             // i控制的是列，j控制的是行。
-            data[i+y][j+x] = 0;
-            // i < matrix.length - y
+            if (matrix[i][j]) {
+                data[i+y][j+x] = 0;
+            }
         }
     }
 };
