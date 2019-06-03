@@ -5,6 +5,7 @@ var canvas = document.querySelector('#canvas'),
     x = 4,
     y = 0,
     timer = null,
+    arrLine = [],
     // 所有方块集合
     mold = [
         [[1,1,1,1]],
@@ -17,6 +18,11 @@ var canvas = document.querySelector('#canvas'),
     ],
     // 生成随机一种方块的矩阵
     matrix = randomMatrix(mold);
+
+// 一行背景数据。当消除时，需要减去一行数据，将它添加在data最前面，所谓背景数据。以保证data总数不变。
+for (let i = 0; i < data[0].length; i++) {
+    arrLine[i] = 0;
+}
 
 // 地图初始化
 render(data);
@@ -32,11 +38,6 @@ document.onkeydown = function (e) {
             if (!collisionX(-1)) {
                 x--;
             }
-            //collisionX(-1);
-            // x--;
-            // if (x < 0) {
-            //     x = 0;
-            // }
             update(matrix);
         break;
     
@@ -51,12 +52,6 @@ document.onkeydown = function (e) {
             if (!collisionX(1)) {
                 x++;
             }
-            //collisionX(1);
-            // x++;
-            // // x大小限制
-            // if (x >= data[0].length - matrix[0].length) {
-            //     x = data[0].length - matrix[0].length;
-            // }
             update(matrix);    
         break;
         // 下
@@ -70,6 +65,7 @@ document.onkeydown = function (e) {
         break;
     }
 };
+
 // 下键键盘抬起事件
 document.onkeyup = function (e){
     if (e.keyCode == 40) {
@@ -78,6 +74,7 @@ document.onkeyup = function (e){
         fall(400);
     }
 };
+
 /**
  * 方块下落函数
  * 
@@ -92,6 +89,7 @@ function fall(time) {
             }
             // 碰撞成功，则不清除上一个方块，生成一个新的方块
             if (collisionY(matrix)) {
+                fullLine(arrLine);
                 y = -1;
                 x = 4;
                 matrix = randomMatrix(mold);
@@ -103,7 +101,7 @@ function fall(time) {
 /**
  * X轴的碰撞检测，返回true，则碰撞成功。返回false，则碰撞失败。
  * 
- * @param {number} n 1或者-1
+ * @param {number} n 1或者-1。表示执行x++和x--操作。
  */
 function collisionX(n) {
     var maxX = data[0].length -  matrix[0].length,
@@ -222,6 +220,22 @@ function map (row,column) {
     }
     return data;
 };
+/**
+ * 判断是否有满行，进行消除
+ */
+function fullLine(arrLine) {
+    var result = false;
+    for (let i = 0; i < data.length; i++) {
+    result = data[i].every((val)=>{
+                return val == 1;
+            });
+        if (result) {
+            data.splice(i,1);
+            data.unshift([].concat(arrLine));
+            result = false;
+        }
+    }
+}
 
 /**
  *  返回一个随机的方块矩阵，尽量采用传参，以避免全局访问。
