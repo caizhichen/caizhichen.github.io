@@ -101,13 +101,16 @@ function collision(matrix) {
     if (y >= 12 - len) {
         return true;
     };
-    for (let i = len - 1; i < len; i++) {
-        for (let j = 0; j < matrix[0].length; j++) {
-            if(data[i+y][j+x] && data[i+y+1][j+x] == 1) {
-                return true;
-            };
+    var n;
+    for (let i = 0; i < matrix[len-1].length; i++) {
+        n = len - 1;
+        while (!matrix[n][i]) {
+            n--;
         }
-    }
+        if (data[n+y+1][x+i]) {
+            return true;
+        } 
+    };
     return false;
 };
 
@@ -127,7 +130,7 @@ function rotate (matrix) {
 
     for (let i = 0; i < x; i++) {
         for (let j = 0; j < y; j++) {
-            arr[j][y - 1 - i] = matrix[i][j];
+            arr[j][x-1-i] = matrix[i][j];
         }
     }
     return arr;
