@@ -35,7 +35,7 @@ document.onkeydown = function (e) {
         // 左
         case 37:
             clear(matrix);
-            if (!collisionX(-1)) {
+            if (!collisionX(-1,matrix)) {
                 x--;
             }
             update(matrix);
@@ -49,7 +49,7 @@ document.onkeydown = function (e) {
         // 右
         case 39:
             clear(matrix);
-            if (!collisionX(1)) {
+            if (!collisionX(1,matrix)) {
                 x++;
             }
             update(matrix);    
@@ -103,55 +103,39 @@ function fall(time) {
  * 
  * @param {number} n 1或者-1。表示执行x++和x--操作。
  */
-function collisionX(n) {
-    var maxX = data[0].length -  matrix[0].length,
-    num,
-    index;
-    if (n + x < 0 || n + x > maxX) {
-        return true;
-    }
+function collisionX(n,matrix) {
 
-    // 简化写法
-    for (let i = 0; i < matrix.length; i++) {
-        if (n > 0) {
-            index = matrix[0].length;
-            num = 1;
-        } else {
-            index = 0;
-            num = -1;
-        }
-        while (!matrix[i][index]) {
-            n > 0 ? index-- : index++;
-        }
-        if (data[y+i][x+index+num]) {
+    var maxX = data[0].length -  matrix[0].length,
+        num,
+        len = matrix.length,
+        index,
+        num2;
+
+        // 判断是不是竖着的一字型方块
+        
+        len == 4 ? num2 = 2 : num2 = 0;
+
+        if (n + x + num2 < 0 || n + x + num2 > maxX) {
             return true;
         } 
-    };
-    return false;
 
-    // if (n > 0) {
-    //     for (let i = 0; i < matrix.length; i++) {
-    //         var index = matrix[0].length;
-    //         while (!matrix[i][index]) {
-    //             index--;
-    //         }
-    //         if (data[y+i][x+index+1]) {
-    //             return true;
-    //         } 
-    //     };
-    //     return false;
-    // } else {
-    //     for (let i = 0; i < matrix.length; i++) {
-    //         var index = 0;
-    //         while (!matrix[i][index]) {
-    //             index++;
-    //         }
-    //         if (data[y+i][x+index-1]) {
-    //             return true;
-    //         } 
-    //     };
-    //     return false;
-    // }
+        
+        for (let i = 0; i < len; i++) {
+            if (n > 0) {
+                index = matrix[0].length;
+                num = 1;
+            } else {
+                index = 0;
+                num = -1;
+            }
+            while (!matrix[i][index]) {
+                n > 0 ? index-- : index++;
+            }
+            if (data[y-num2+i][x+num2+index+num]) {
+                return true;
+            } 
+        };
+        return false;
 };
 
 /**
@@ -161,20 +145,25 @@ function collisionX(n) {
  */
 function collisionY(matrix) {
     // 多次使用，则用变量存储
-    var len = matrix.length;
-    // 方块到底部
-    if (y >= data.length - len) {
+    var len = matrix.length,
+        n,
+        num;
+    
+    // 判断是不是竖着的一字型方块
+    len == 4 ? num = 2 :  num = 0;
+
+    if (y >= data.length - len + num) {
         return true;
     };
-    var n;
+
     for (let i = 0; i < matrix[len-1].length; i++) {
         n = len - 1;
         while (!matrix[n][i]) {
             n--;
         }
-        if (data[n+y+1][x+i]) {
+        if (data[n+y-num+1][x+num+i]) {
             return true;
-        } 
+        }
     };
     return false;
 };
@@ -262,9 +251,13 @@ function update(matrix) {
     for (let i = 0; i < matrix.length; i++) {
         for (let j = 0; j < matrix[0].length; j++) {
             // 等于0才将它等于1。这是因为绘制时会将其他方块为1的值改为0。
-            if (!data[i+y][j+x]) {
+            if (matrix.length == 4 && !data[i+y-2][j+x+2]) {
+                data[i+y-2][j+x+2] = matrix[i][j];
+            };
+            // 非竖直一字形方块
+            if ( matrix.length != 4 && !data[i+y][j+x]) {
                 data[i+y][j+x] = matrix[i][j];
-            }
+            };
         }
     }
     render(data);
@@ -281,7 +274,11 @@ function clear (matrix) {
         for (let j = 0; j < matrix[0].length; j++) {
             // i控制的是列，j控制的是行。
             if (matrix[i][j]) {
-                data[i+y][j+x] = 0;
+                if (matrix.length == 4) {
+                    data[i+y-2][j+x+2] = 0;
+                } else {
+                    data[i+y][j+x] = 0;
+                }
             }
         }
     }
@@ -312,10 +309,8 @@ function render (data) {
 
     for (let i = 0; i < cLen; i++) {
         for (let j = 0; j < rLen; j++) {
-
             // 值为 1，则绘制成红色；为 0，则绘制成黄色。1代表方块，0代表背景。
             gc.fillStyle = data[i][j] ? 'red' : 'yellow';
-
             gc.fillRect( j*(w+5)+5, i*(h+5)+5, w, h );
         }
     }
