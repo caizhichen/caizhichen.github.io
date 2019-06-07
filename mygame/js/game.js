@@ -2,7 +2,7 @@ var canvas = document.querySelector('#canvas'),
     gc = canvas.getContext("2d"),
     data = map(16,16),
     onOff = false,
-    x = 4,
+    x = Math.floor(data.length/2)-2,
     y = 0,
     timer = null,
     arrLine = [],
@@ -17,7 +17,13 @@ var canvas = document.querySelector('#canvas'),
         [[0,0,1],[1,1,1]]
     ],
     // 生成随机一种方块的矩阵
-    matrix = randomMatrix(mold);
+    matrix = randomMatrix(mold),
+    controlGame = false,
+    score = 0,
+    openGame = document.querySelector('#open'),
+    timeout = document.querySelector('#timeout'),
+    againGame = document.querySelector('#again'),
+    scroeText = document.querySelector('.score');
 
 // 一行背景数据。当消除时，需要减去一行数据，将它添加在data最前面，所谓背景数据。以保证data总数不变。
 for (let i = 0; i < data[0].length; i++) {
@@ -27,10 +33,29 @@ for (let i = 0; i < data[0].length; i++) {
 // 地图初始化
 render(data);
 
-// 执行方块下落
-fall(400);
+// 开始游戏
+openGame.onclick = function () {
+    fall(400);
+    this.disabled = true;
+    timeout.disabled = false;
+    againGame.disabled = false;
+};
+// 游戏暂停/继续
+timeout.onclick = function () {
+    clearInterval(timer);
+    controlGame && fall(400);
+    controlGame = !controlGame;
+    console.log(controlGame);
+};
+// 重新开始游戏
+againGame.onclick = function () {
+    again();
+};
 
 document.onkeydown = function (e) {
+    if(!openGame.disabled || controlGame ){
+        return;
+    };
     switch (e.keyCode) {
         // 左
         case 37:
@@ -44,8 +69,11 @@ document.onkeydown = function (e) {
         // 上
         case 38:
             clear(matrix);
-            matrix = rotate(matrix);
-            break;
+            if (isCanRotate(matrix)) {
+                matrix = rotate(matrix);
+                update(matrix);
+            }
+        break;
         // 右
         case 39:
             clear(matrix);
@@ -68,11 +96,36 @@ document.onkeydown = function (e) {
 
 // 下键键盘抬起事件
 document.onkeyup = function (e){
+    if(!openGame.disabled || controlGame){
+        return;
+    };
     if (e.keyCode == 40) {
         onOff = false;
         clearInterval(timer);
         fall(400);
     }
+};
+
+/**
+ * 重新开始游戏
+ * 
+ */
+function again () {
+    // 分数清空
+    score = 0;
+    scroeText.innerHTML = 0;
+    // 重置x,y值，重新生成方块
+    x = Math.floor(data.length/2)-2;
+    y = 0;
+    clearInterval(timer);
+    matrix = randomMatrix(mold);
+
+    // 重新生成游戏二维数组，并进行渲染
+    data = map(16,16);
+    render(data);
+
+    // 启动游戏
+    fall(400);
 };
 
 /**
@@ -82,6 +135,7 @@ document.onkeyup = function (e){
  */
 
 function fall(time) {
+    var result;
     timer = setInterval(function () {
             update(matrix);
             if (!collisionY(matrix)) {
@@ -91,8 +145,18 @@ function fall(time) {
             if (collisionY(matrix)) {
                 fullLine(arrLine);
                 y = -1;
-                x = 4;
+                x = Math.floor(data.length/2)-2;
                 matrix = randomMatrix(mold);
+
+                // 判断第一行是否都为0
+                result = data[0].every((val)=>{
+                    return !val;
+                });
+                if (!result) {
+                    clearInterval(timer);
+                    alert('game over');  
+                };
+                
             }
             y++;
         },time);
@@ -189,6 +253,23 @@ function rotate (matrix) {
     }
     return arr;
 };
+/**
+ * 方块是否可以变形检测，这个检测并不完善。
+ * 
+ * @param {array} matrix 方块的类型数组
+ */
+function isCanRotate (matrix) {
+    var rLen = matrix[0].length,
+        cLen = matrix.length;
+
+    if (y+cLen > data.length-1) {
+        return false;
+    }
+    if (data[y+cLen] && data[y+cLen][x] == 1) {
+        return false;
+    }
+    return true;
+};
 
 /**
  * 创建二维数组
@@ -227,6 +308,8 @@ function fullLine(arrLine) {
             // 这是由于对象的引用赋值问题，两者会产生关联。所以采用这种方式。
             data.unshift([].concat(arrLine));
             result = false;
+            score += data[0].length;
+            scroeText.innerHTML = score;
         }
     }
 }
