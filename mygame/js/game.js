@@ -120,6 +120,9 @@ function again () {
     clearInterval(timer);
     matrix = randomMatrix(mold);
 
+    openGame.disabled = true;
+    controlGame = false;
+
     // 重新生成游戏二维数组，并进行渲染
     data = map(16,16);
     render(data);
