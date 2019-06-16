@@ -167,8 +167,13 @@ function fall(time) {
                     return !val;
                 });
                 if (!result) {
+                    console.log(data)
+                    // console.log(1)
                     clearInterval(timer);
-                    alert('game over');  
+                    setTimeout(function (){
+                        alert('game over');
+                    },10);
+                    // alert('game over');  
                 };
                 
             }
