@@ -115,6 +115,7 @@ function again () {
     // 分数清空
     score = 0;
     scroeText.innerHTML = 0;
+    scoend = true;
     // 重置x,y值，重新生成方块
     x = Math.floor(data.length/2)-2;
     y = 0;
@@ -129,7 +130,7 @@ function again () {
     render(data);
 
     // 启动游戏
-    fall(time);
+    fall(400);
 };
 
 /**
