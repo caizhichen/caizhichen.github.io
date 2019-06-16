@@ -3,6 +3,7 @@ var canvas = document.querySelector('#canvas'),
     data = map(16,16),
     onOff = false,
     x = Math.floor(data.length/2)-2,
+    scoend = true,
     y = 0,
     timer = null,
     arrLine = [],
@@ -49,7 +50,7 @@ timeout.onclick = function () {
 };
 // 重新开始游戏
 againGame.onclick = function () {
-    again();
+    again(400);
 };
 
 document.onkeydown = function (e) {
@@ -128,7 +129,7 @@ function again () {
     render(data);
 
     // 启动游戏
-    fall(400);
+    fall(time);
 };
 
 /**
@@ -139,6 +140,15 @@ function again () {
 
 function fall(time) {
     var result;
+    // 第二关
+    if (score >= 16 && time >= 200) {
+        if (scoend) {
+            alert('第二关');
+            scoend=false;
+            data = map(16,16);
+        }
+        time = 200;
+    }
     timer = setInterval(function () {
             update(matrix);
             if (!collisionY(matrix)) {
